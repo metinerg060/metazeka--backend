@@ -2,6 +2,8 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import dotenv from "dotenv";
 
+import listingsRoutes from "./routes/listings";
+
 dotenv.config();
 
 const app = Fastify({ logger: true });
@@ -9,7 +11,7 @@ const app = Fastify({ logger: true });
 async function start() {
   await app.register(cors, {
     origin: true,
-    methods: ["GET", "POST", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   });
 
   app.get("/health", async () => {
@@ -34,6 +36,9 @@ async function start() {
       message: "Mock engine çalıştı. Sonraki adım: Gemini API proxy bağlamak.",
     };
   });
+
+  // ✅ Listings CRUD
+  await app.register(listingsRoutes, { prefix: "/api/listings" });
 
   const PORT = Number(process.env.PORT || 8787);
   const HOST = process.env.HOST || "0.0.0.0";
